@@ -26,31 +26,22 @@ public class MainActivity extends Activity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private TextView mTextView;
-
-    private static final String RECORD_STATUS = "record_status";
     private static final int REQUEST_CODE = 1000;
-
     private static final int PERMISSION_REQ_ID_RECORD_AUDIO = 22;
     private static final int PERMISSION_REQ_ID_WRITE_EXTERNAL_STORAGE = PERMISSION_REQ_ID_RECORD_AUDIO + 1;
-    private boolean isPermissible = false;
 
+    private boolean isPermissible = false;
     private int mScreenWidth;
     private int mScreenHeight;
     private int mScreenDensity;
-
-    /**
-     * 是否已经开启视频录制
-     */
-    private boolean isStarted = ScreenRecordApp.isStarted;
     /**
      * 是否为标清视频
      */
-    private boolean isVideoSd = ScreenRecordApp.isVideoSd;
+    private boolean isVideoSd;
     /**
      * 是否开启音频录制
      */
-    private boolean isAudio = ScreenRecordApp.isAudio;
+    private boolean isAudio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +51,6 @@ public class MainActivity extends Activity {
             isPermissible = true;
         }
         Log.d(TAG, "onCreate: isPermissible = " + isPermissible);
-        if (savedInstanceState != null) {
-            isStarted = savedInstanceState.getBoolean(RECORD_STATUS);
-        }
         getView();
         getScreenBaseInfo();
     }
@@ -109,23 +97,22 @@ public class MainActivity extends Activity {
     }
 
     private void getView() {
-        mTextView = (TextView) findViewById(R.id.button_control);
-        if (isStarted) {
-            statusIsStarted();
-        } else {
-            statusIsStopped();
-        }
-        mTextView.setOnClickListener(new OnClickListener() {
+        TextView startTv = (TextView) findViewById(R.id.button_start);
+        startTv.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (isStarted) {
-                    stopScreenRecording();
-                    statusIsStopped();
-                    Log.i(TAG, "Stopped screen recording");
-                } else if (isPermissible) {
+                if (isPermissible) {
                     startScreenRecording();
                 }
+            }
+        });
+        TextView stopTv = (TextView) findViewById(R.id.button_stop);
+        stopTv.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                stopScreenRecording();
             }
         });
 
@@ -141,7 +128,6 @@ public class MainActivity extends Activity {
                     case R.id.hd_button:
                         isVideoSd = false;
                         break;
-
                     default:
                         break;
                 }
@@ -159,20 +145,6 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 开启屏幕录制时的UI状态
-     */
-    private void statusIsStarted() {
-        mTextView.setText(R.string.stop_recording);
-    }
-
-    /**
-     * 结束屏幕录制后的UI状态
-     */
-    private void statusIsStopped() {
-        mTextView.setText(R.string.start_recording);
-    }
-
-    /**
      * 获取屏幕相关数据
      */
     private void getScreenBaseInfo() {
@@ -181,12 +153,6 @@ public class MainActivity extends Activity {
         mScreenWidth = metrics.widthPixels;
         mScreenHeight = metrics.heightPixels;
         mScreenDensity = metrics.densityDpi;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(RECORD_STATUS, isStarted);
     }
 
     /**
@@ -213,10 +179,7 @@ public class MainActivity extends Activity {
                 service.putExtra("density", mScreenDensity);
                 service.putExtra("quality", isVideoSd);
                 startService(service);
-                // 已经开始屏幕录制，修改UI状态
-                isStarted = !isStarted;
-                statusIsStarted();
-                Log.i(TAG, "Started screen recording");
+                Log.i(TAG, "Start screen recording");
             } else {
                 Toast.makeText(this, R.string.user_cancelled, Toast.LENGTH_LONG).show();
                 Log.i(TAG, "User cancelled");
@@ -230,7 +193,6 @@ public class MainActivity extends Activity {
     private void stopScreenRecording() {
         Intent service = new Intent(this, ScreenRecordService.class);
         stopService(service);
-        isStarted = !isStarted;
     }
 
     @Override

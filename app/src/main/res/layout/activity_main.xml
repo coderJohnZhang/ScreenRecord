@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:gravity="center">
 
     <RadioGroup
         android:id="@+id/radio_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/margin_vertical"
         android:orientation="vertical">
 
         <RadioButton
@@ -41,20 +41,44 @@
         android:text="@string/audio"
         android:textColor="@android:color/black"/>
 
-    <TextView
-        android:id="@+id/button_control"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/audio_check_box"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/margin_vertical"
-        android:background="@drawable/button_selector"
-        android:paddingBottom="@dimen/padding_vertical"
-        android:paddingLeft="@dimen/padding_horizontal"
-        android:paddingRight="@dimen/padding_horizontal"
-        android:paddingTop="@dimen/padding_vertical"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/text_size_20"
-        tools:text="@string/start_recording"/>
+        android:layout_marginTop="@dimen/margin"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/button_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:background="@drawable/button_selector"
+            android:paddingBottom="@dimen/padding_vertical"
+            android:paddingLeft="@dimen/padding_horizontal"
+            android:paddingRight="@dimen/padding_horizontal"
+            android:paddingTop="@dimen/padding_vertical"
+            android:text="@string/start_recording"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_20"
+            tools:text="@string/start_recording"/>
+
+        <TextView
+            android:id="@+id/button_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:background="@drawable/button_selector"
+            android:paddingBottom="@dimen/padding_vertical"
+            android:paddingLeft="@dimen/padding_horizontal"
+            android:paddingRight="@dimen/padding_horizontal"
+            android:paddingTop="@dimen/padding_vertical"
+            android:text="@string/stop_recording"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_20"
+            tools:text="@string/stop_recording"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

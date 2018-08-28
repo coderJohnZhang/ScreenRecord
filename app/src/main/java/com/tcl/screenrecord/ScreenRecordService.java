@@ -48,7 +48,6 @@ public class ScreenRecordService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "Service onCreate() is called");
-        ScreenRecordApp.isStarted = true;
     }
 
     @Override
@@ -86,8 +85,7 @@ public class ScreenRecordService extends Service {
         // 必须在mediaRecorder.prepare() 之后调用，否则报错"fail to get surface"
         mVirtualDisplay = createVirtualDisplay();
         mMediaRecorder.start();
-        ScreenRecordApp.isAudio = isAudio;
-        ScreenRecordApp.isVideoSd = isVideoSd;
+
         return Service.START_STICKY;
     }
 
@@ -102,19 +100,24 @@ public class ScreenRecordService extends Service {
         Date curDate = new Date(System.currentTimeMillis());
         String curTime = formatter.format(curDate).replace(" ", "");
         String videoQuality = "HD";
-        if (isVideoSd) videoQuality = "SD";
+        if (isVideoSd) {
+            videoQuality = "SD";
+        }
 
         Log.i(TAG, "Create MediaRecorder");
         MediaRecorder mediaRecorder = new MediaRecorder();
-        if (isAudio) mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        if (isAudio) {
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        }
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setOutputFile(Environment.
                 getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/" + videoQuality + curTime + ".mp4");
         mediaRecorder.setVideoSize(mScreenWidth, mScreenHeight);  //after setVideoSource(), setOutFormat()
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);  //after setOutputFormat()
-        if (isAudio)
+        if (isAudio) {
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);  //after setOutputFormat()
+        }
         int bitRate;
         if (isVideoSd) {
             mediaRecorder.setVideoEncodingBitRate(mScreenWidth * mScreenHeight);
@@ -144,7 +147,6 @@ public class ScreenRecordService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "Service onDestroy");
-        ScreenRecordApp.isStarted = false;
         stopForeground(true);
         if (mVirtualDisplay != null) {
             mVirtualDisplay.release();
